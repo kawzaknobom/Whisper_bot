@@ -1,6 +1,7 @@
 from pyrogram.types import InlineKeyboardMarkup , InlineKeyboardButton , CallbackQuery , ForceReply,Message
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
+from pyrogram import idle
 from textwrap import wrap
 import os,time,shutil
 from faster_whisper import WhisperModel
@@ -42,6 +43,19 @@ async def _telegram_file(client, message):
   await message.reply_document(Txt_File)
   shutil.rmtree(dl_path)
 
-bot.run()
+async def run_my_bot():
+    # This manually awaits the start coroutine that was causing the warning
+    await bot.start()
+    print("Successfully started! Send a message to your bot to test.")
     
-   
+    # This keeps the bot running until you manually stop the cell
+    await idle()
+    
+    # Gracefully shuts down
+    await bot.stop()
+
+# Execution
+try:
+    asyncio.get_event_loop().create_task(run_my_bot())
+except Exception as e:
+    print(f"Failed to run: {e}")
