@@ -2,7 +2,7 @@ from pyrogram.types import InlineKeyboardMarkup , InlineKeyboardButton , Callbac
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
 from textwrap import wrap
-import time,shutil
+import os,time,shutil
 from faster_whisper import WhisperModel
 
 Api_Id = 15952578
