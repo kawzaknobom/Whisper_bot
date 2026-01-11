@@ -9,9 +9,7 @@ Bot_Token = 'Put UR Telegram Token Here'
 
 from pyrogram.types import InlineKeyboardMarkup , InlineKeyboardButton , CallbackQuery , ForceReply,Message
 from pyrogram import Client, filters
-from pyrogram.errors import FloodWait
 from pyrogram import idle
-from textwrap import wrap
 import os,time,shutil,asyncio
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
 from faster_whisper import WhisperModel
