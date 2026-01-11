@@ -2,7 +2,7 @@ from pyrogram.types import InlineKeyboardMarkup , InlineKeyboardButton , Callbac
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
 from textwrap import wrap
-import time
+import time,shutil
 from faster_whisper import WhisperModel
 
 Api_Id = 15952578
@@ -24,53 +24,6 @@ def whisper_transcribe(media_file):
   for segment in segments:
     open(TxtFile,'a').write(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}\n")
   return TxtFile
-
-def Txt_2_Pdf(Txt_File): 
- Pdf_Fpdf_File = ('.' if Txt_File[0]=='.' else '' ) + Txt_File.split('.')[1 if Txt_File[0]=='.' else 0 ] + '_Conv.pdf'
- Text = open(Txt_File,'r').read()
- Pdf = Pdf_Prepare()
- Insert_Text_Pdf(Pdf,Text+T_linebreak)
- Pdf.output(Pdf_Fpdf_File)
- return Pdf_Fpdf_File
-
-def Pdf_Text_Create(pdf,text):
-  reshaped_text = arabic_reshaper.reshape(text)
-  bidi_text = get_display(reshaped_text)
-  pdf.multi_cell(185,13,bidi_text,0,'R')
-  
-def Insert_Text_Pdf(pdf,Text):
-  Text_Portions = Text_Prepare_Pdf(Text) 
-  for Por in Text_Portions : 
-    Pdf_Text_Create(pdf,Por)
-    
-def Send_TRes(Media_Msg,Txt_File): 
-  Media_Msg.reply_document(Txt_File)
-  pdfresult = ('.' if Txt_File[0]=='.' else '' ) + Txt_File.split('.')[1 if Txt_File[0]=='.' else 0 ] + '.pdf'
-  try : 
-   pdfres = Txt_2_Pdf(Txt_File)
-   Media_Msg.reply_document(pdfres)
-  except : 
-   Media_Msg.reply( 'حدث خطأ في صناعة بدف')
-  text = open(Txt_File,encoding='utf-8').read()
-  Send_Text_Res(Media_Msg,text)
-  
-def Send_Text_Res(Media_Msg,Text): 
-  if len(Text) <= 4096 :
-    if len(Text.strip()) != 0 :
-        Media_Msg.reply(Text)
-  else :
-      textlist = wrap(Text.replace('\n','$'),4096)
-      for part in textlist:
-        if '$' in part : 
-          part = part.replace('$','\n')
-        Flood_Wait_fix(Media_Msg,part)
-        
-def Flood_Wait_fix(Media_Msg,part):
-  try : 
-   Media_Msg.reply(part)
-  except FloodWait as err : 
-   time.sleep(err.x)
-   return Flood_Wait_fix(Media_Msg,part)
     
 def Pyrogram_Client(Bot_Token):
   Bot_Identifier = Bot_Token.split(':')[0]
@@ -86,7 +39,8 @@ dl_path = f'./downloads_{Bot_Identifier}/'
 def _telegram_file(client, message):
   file = message.download(file_name=dl_path)
   Txt_File = whisper_transcribe(file)
-  Send_TRes(message,Txt_File)
+  message.reply_document(Txt_File)
+  shutil.rmtree(dl_path)
 
 bot.run()
     
