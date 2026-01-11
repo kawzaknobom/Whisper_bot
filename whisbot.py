@@ -1,5 +1,6 @@
 from pyrogram.types import InlineKeyboardMarkup , InlineKeyboardButton , CallbackQuery , ForceReply,Message
 from pyrogram import Client, filters
+from pyrogram.errors import FloodWait
 from textwrap import wrap
 from faster_whisper import WhisperModel
 
@@ -58,7 +59,7 @@ def Pyrogram_Client(Bot_Token):
   bot = Client(Session_file,api_id=Api_Id,api_hash=Api_Hash,bot_token=Bot_Token)
   return bot,Bot_Identifier
   
-Bot_Token = '8499890376:AAHyF9XC0RgbWb1lvGUpPkNuJXoKzxI32BY'
+Bot_Token = '8516897868:AAG8tyDbCdDYmcQHyBgnxf_fI5nwDUulcMY'
 bot,Bot_Identifier = Pyrogram_Client(Bot_Token)
 dl_path = f'./downloads_{Bot_Identifier}/'
 
