@@ -10,17 +10,17 @@ Api_Hash = '3600ce5f8f9b9e18cba0f318fa0e3600'
 Audio_Forms = (".mp3",".ogg",".m4a",".aac",".flac",".wav",".wma",".opus",".3gpp")
 Video_Forms = (".mp4",".mkv",".mov",".avi",".wmv",".avchd",".webm",".flv")
 
-def Mp3_Conv(File):
+async def Mp3_Conv(File):
   Mp3_File = ('.' if File.startswith('.') else '') +  File.split('.')[(1 if File[0] == '.' else 0)] + '_Conv.mp3'
   Mp3_Cmd = f'ffmpeg -i "{File}" -q:a 0 -map a "{Mp3_File}" -y'
   os.system(Mp3_Cmd)
   return Mp3_File
 
-def whisper_transcribe(media_file):
+async def whisper_transcribe(media_file):
   TxtFile = ('.' if media_file[0]=='.' else '' ) + media_file.split('.')[1 if media_file[0]=='.' else 0 ] + '_WTranscribed.txt'
-  media_file = Mp3_Conv(media_file) 
-  model = WhisperModel("large-v3-turbo", device="cpu", compute_type="int8")
-  segments, info = model.transcribe(media_file, beam_size=5, vad_filter=True)
+  media_file = await Mp3_Conv(media_file) 
+  model = await WhisperModel("large-v3-turbo", device="cpu", compute_type="int8")
+  segments, info = await model.transcribe(media_file, beam_size=5, vad_filter=True)
   for segment in segments:
     open(TxtFile,'a').write(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}\n")
   return TxtFile
@@ -36,10 +36,10 @@ bot,Bot_Identifier = Pyrogram_Client(Bot_Token)
 dl_path = f'./downloads_{Bot_Identifier}/'
 
 @bot.on_message(filters.private & filters.incoming & (filters.audio | filters.voice | filters.video | filters.document ))
-def _telegram_file(client, message):
-  file = message.download(file_name=dl_path)
-  Txt_File = whisper_transcribe(file)
-  message.reply_document(Txt_File)
+async def _telegram_file(client, message):
+  file = await message.download(file_name=dl_path)
+  Txt_File = await whisper_transcribe(file)
+  await message.reply_document(Txt_File)
   shutil.rmtree(dl_path)
 
 bot.run()
