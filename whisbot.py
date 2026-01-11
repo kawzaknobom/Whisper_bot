@@ -25,6 +25,24 @@ def whisper_transcribe(media_file):
     open(TxtFile,'a').write(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}\n")
   return TxtFile
 
+def Txt_2_Pdf(Txt_File): 
+ Pdf_Fpdf_File = ('.' if Txt_File[0]=='.' else '' ) + Txt_File.split('.')[1 if Txt_File[0]=='.' else 0 ] + '_Conv.pdf'
+ Text = open(Txt_File,'r').read()
+ Pdf = Pdf_Prepare()
+ Insert_Text_Pdf(Pdf,Text+T_linebreak)
+ Pdf.output(Pdf_Fpdf_File)
+ return Pdf_Fpdf_File
+
+def Pdf_Text_Create(pdf,text):
+  reshaped_text = arabic_reshaper.reshape(text)
+  bidi_text = get_display(reshaped_text)
+  pdf.multi_cell(185,13,bidi_text,0,'R')
+  
+def Insert_Text_Pdf(pdf,Text):
+  Text_Portions = Text_Prepare_Pdf(Text) 
+  for Por in Text_Portions : 
+    Pdf_Text_Create(pdf,Por)
+    
 def Send_TRes(Media_Msg,Txt_File): 
   Media_Msg.reply_document(Txt_File)
   pdfresult = ('.' if Txt_File[0]=='.' else '' ) + Txt_File.split('.')[1 if Txt_File[0]=='.' else 0 ] + '.pdf'
