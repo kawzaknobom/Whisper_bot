@@ -9,7 +9,9 @@ Bot_Token = 'Put UR Telegram Token Here'
 
 from pyrogram.types import InlineKeyboardMarkup , InlineKeyboardButton , CallbackQuery , ForceReply,Message
 from pyrogram import Client, filters
+from pyrogram.errors import FloodWait
 from pyrogram import idle
+from textwrap import wrap
 import os,time,shutil,asyncio
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
 from faster_whisper import WhisperModel
@@ -20,15 +22,15 @@ Audio_Forms = (".mp3",".ogg",".m4a",".aac",".flac",".wav",".wma",".opus",".3gpp"
 Video_Forms = (".mp4",".mkv",".mov",".avi",".wmv",".avchd",".webm",".flv")
 
 async def Mp3_Conv(File):
-  Mp3_File = ('.' if File.startswith('.') else '') +  File.split('.')[(1 if File[0] == '.' else 0)] + '_Conv.mp3'
+  Mp3_File = File.split('/')[-1].split('.')[0]  + '_Conv.mp3'
   Mp3_Cmd = f'ffmpeg -i "{File}" -q:a 0 -map a "{Mp3_File}" -y'
   os.system(Mp3_Cmd)
   return Mp3_File
 
 async def whisper_transcribe(media_file):
-  TxtFile = ('.' if media_file[0]=='.' else '' ) + media_file.split('.')[1 if media_file[0]=='.' else 0 ] + '_WTranscribed.txt'
+  TxtFile = media_file.split('/')[-1].split('.')[0] + '_WTranscribed.txt'
   media_file = await Mp3_Conv(media_file)
-  model = WhisperModel("large-v3-turbo", device="cuda", compute_type="int8")
+  model = WhisperModel("large-v3", device="cuda", compute_type="int8")
   segments, info = model.transcribe(media_file, beam_size=5, vad_filter=True)
   for segment in segments:
     open(TxtFile,'a').write(f"{segment.text}")
