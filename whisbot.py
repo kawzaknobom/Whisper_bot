@@ -47,6 +47,10 @@ def Pyrogram_Client(Bot_Token):
 bot,Bot_Identifier = Pyrogram_Client(Bot_Token)
 dl_path = f'./downloads_{Bot_Identifier}/'
 
+@bot.on_message(filters.command('start') & filters.private)
+async def command1(bot,message):
+   await message.reply('لبقية البوتات \n\n @sunnaybots')
+  
 @bot.on_message(filters.private & filters.incoming & (filters.audio | filters.voice | filters.video ))
 async def _telegram_file(client, message):
   reply_msg = await message.reply('جار التفريغ')
