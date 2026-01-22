@@ -1,9 +1,9 @@
-import nest_asyncio
+import nest_asyncio,os
 nest_asyncio.apply()
 
 #########################################################
 
-Bot_Token = 'Put UR Telegram Token Here'
+Bot_Token = os.getenv('TOKEN')
 
 ########################################################
 
