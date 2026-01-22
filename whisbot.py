@@ -29,7 +29,7 @@ async def Mp3_Conv(File):
   return Mp3_File
 
 async def whisper_transcribe(media_file):
-  mainDir = '/'.join(File.split('/')[:-1]) + '/'
+  mainDir = '/'.join(media_file.split('/')[:-1]) + '/'
   TxtFile = mainDir + media_file.split('/')[-1].split('.')[0] + '_WTranscribed.txt'
   media_file = await Mp3_Conv(media_file)
   model = WhisperModel("large-v3", device="cuda", compute_type="int8")
