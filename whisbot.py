@@ -22,13 +22,15 @@ Audio_Forms = (".mp3",".ogg",".m4a",".aac",".flac",".wav",".wma",".opus",".3gpp"
 Video_Forms = (".mp4",".mkv",".mov",".avi",".wmv",".avchd",".webm",".flv")
 
 async def Mp3_Conv(File):
-  Mp3_File = File.split('/')[-1].split('.')[0]  + '_Conv.mp3'
+  mainDir = '/'.join(File.split('/')[:-1]) + '/'
+  Mp3_File = mainDir +  File.split('/')[-1].split('.')[0] + '_Conv.mp3'
   Mp3_Cmd = f'ffmpeg -i "{File}" -q:a 0 -map a "{Mp3_File}" -y'
   os.system(Mp3_Cmd)
   return Mp3_File
 
 async def whisper_transcribe(media_file):
-  TxtFile = media_file.split('/')[-1].split('.')[0] + '_WTranscribed.txt'
+  mainDir = '/'.join(File.split('/')[:-1]) + '/'
+  TxtFile = mainDir + media_file.split('/')[-1].split('.')[0] + '_WTranscribed.txt'
   media_file = await Mp3_Conv(media_file)
   model = WhisperModel("large-v3", device="cuda", compute_type="int8")
   segments, info = model.transcribe(media_file, beam_size=5, vad_filter=True)
@@ -55,14 +57,14 @@ async def _telegram_file(client, message):
   await reply_msg.edit_text('تم التفريغ ✅')
 
 
-async def main():
+def main():
     if not os.path.exists(dl_path): os.makedirs(dl_path)
     try:
-        await bot.start()
+        bot.start()
         print("✅ Whisper Bot is ONLINE!")
-        await idle()
+        idle()
     finally:
         if bot.is_connected:
-            await bot.stop()
+           bot.stop()
 
-await main()
+main()
